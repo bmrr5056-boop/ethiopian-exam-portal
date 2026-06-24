@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "grade": 12,
+    "stream": "natural",
+    "subject": "Physics",
+    "question": "Which of the following colors of light has the highest frequency?",
+    "options": ["Red", "Green", "Blue", "Violet"],
+    "answer": "Violet",
+    "explanation": "In the visible light spectrum, violet has the shortest wavelength and the highest frequency."
+  },
+  {
+    "id": 2,
+    "grade": 12,
+    "stream": "social",
+    "subject": "Geography",
+    "question": "Which of the following is the largest river in the world by water volume?",
+    "options": ["Nile", "Amazon", "Mississippi", "Yangtze"],
+    "answer": "Amazon",
+    "explanation": "The Amazon River is the largest river by discharge volume of water in the world."
+  },
+  {
+    "id": 3,
+    "grade": 11,
+    "stream": "both",
+    "subject": "English",
+    "question": "Identify the correct sentence:",
+    "options": ["He don't like coffee.", "He doesn't likes coffee.", "He doesn't like coffee.", "He didn't liked coffee."],
+    "answer": "He doesn't like coffee.",
+    "explanation": "After the auxiliary verb 'does not', the base form of the verb 'like' must be used."
+  }
+]
