@@ -29,14 +29,12 @@
         .txt-incorrect { color: #f75a68; font-weight: bold; }
         .score-display { text-align: center; font-size: 24px; margin: 20px 0; color: #fff; }
         
-        /* Persistent Footer Info requested by user */
         .footer-owner { position: fixed; bottom: 15px; left: 0; width: 100%; text-align: center; color: #7c7c8a; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 1. LOGIN SECTION -->
     <div id="login-section">
         <h1>የ12ኛ ክፍል ብሔራዊ ፈተና መለማመጃ ፖርታል</h1>
         <div class="form-group">
@@ -46,7 +44,6 @@
         <button class="btn" onclick="handleLogin()">ግባ (Login)</button>
     </div>
 
-    <!-- 2. STREAM/SUBJECT SELECTION -->
     <div id="stream-section" class="hidden">
         <h2 id="welcome-msg">እንኳን ደህና መጡ!</h2>
         <div class="form-group">
@@ -66,7 +63,6 @@
         <button class="btn" id="start-btn" onclick="startExam()" disabled>ፈተናውን ጀምር</button>
     </div>
 
-    <!-- 3. EXAM IN PROGRESS SECTION -->
     <div id="exam-section" class="hidden">
         <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
         <div style="display: flex; justify-content: space-between; margin-bottom: 15px; color: #a8a8b3;">
@@ -78,7 +74,6 @@
         <button class="btn" id="next-btn" onclick="goToNextQuestion()" disabled>ቀጣይ ጥያቄ ➡️</button>
     </div>
 
-    <!-- 4. RESULTS & REVIEW SECTION -->
     <div id="result-section" class="hidden">
         <h2>የፈተናው ውጤት ማጠቃለያ</h2>
         <div class="score-display" id="score-text">ውጤት፡ 0 / 0 (0%)</div>
@@ -90,7 +85,6 @@
     </div>
 </div>
 
-<!-- Non-disappearing Owner signature requested by Amanuel Zewude -->
 <div class="footer-owner">Owner: Amanuel Zewude</div>
 
 <script>
@@ -105,7 +99,7 @@
         try {
             const res = await fetch('/questions');
             allQuestions = await res.json();
-            console.log("Loaded questions successfully:", allQuestions.length);
+            console.log("Loaded questions:", allQuestions.length);
         } catch (err) {
             console.error("የጥያቄ ፋይሉን ማንበብ አልተቻለም:", err);
         }
@@ -133,45 +127,35 @@
             return;
         }
 
-        // Improved filtering to make sure text casing mismatch doesn't break subject dropdown
-        const filtered = allQuestions.filter(q => q.stream && q.stream.toLowerCase() === stream.toLowerCase());
+        // 100% አስተማማኝ ማጣሪያ (ፊደል ትልቅም ትንሽም ቢሆን ይፈልገዋል)
+        let filtered = allQuestions.filter(q => q.stream && q.stream.toLowerCase().includes(stream.toLowerCase()));
+        
+        // አሁንም ካልተገኘ በ questions.json ውስጥ ያለውን ሁሉንም ልዩ ትምህርቶች በሙሉ ያውጣው
+        if(filtered.length === 0) {
+            filtered = allQuestions;
+        }
+
         const subjects = [...new Set(filtered.map(q => q.subject))];
         
-        if (subjects.length === 0) {
-            // Fallback: If strict filter yields nothing, pull all unique subjects to ensure dropdown is never empty
-            const fallbackSubjects = [...new Set(allQuestions.map(q => q.subject))];
-            fallbackSubjects.forEach(sub => {
-                if(sub) {
-                    const opt = document.createElement('option');
-                    opt.value = sub;
-                    opt.innerText = sub.toUpperCase();
-                    subSelect.appendChild(opt);
-                }
-            });
-        } else {
-            subjects.forEach(sub => {
-                if(sub) {
-                    const opt = document.createElement('option');
-                    opt.value = sub;
-                    opt.innerText = sub.toUpperCase();
-                    subSelect.appendChild(opt);
-                }
-            });
-        }
+        subjects.forEach(sub => {
+            if(sub) {
+                const opt = document.createElement('option');
+                opt.value = sub;
+                opt.innerText = sub.toUpperCase();
+                subSelect.appendChild(opt);
+            }
+        });
 
         subSelect.disabled = false;
         startBtn.disabled = false;
     }
 
     function startExam() {
-        const stream = document.getElementById('stream-select').value;
         const subject = document.getElementById('subject-select').value;
         if(!subject) return alert("እባክህ ትምህርት ምረጥ!");
 
+        // በስም ብቻ ጥያቄዎችን በትክክል መርጦ ያውጣ
         currentSubjectQuestions = allQuestions.filter(q => q.subject === subject);
-        if(currentSubjectQuestions.length === 0) {
-            currentSubjectQuestions = allQuestions.filter(q => q.stream && q.stream.toLowerCase() === stream.toLowerCase() && q.subject === subject);
-        }
         
         if(currentSubjectQuestions.length === 0) return alert("ለዚህ ክፍለ ትምህርት የተዘጋጀ ጥያቄ አልተገኘም!");
 
