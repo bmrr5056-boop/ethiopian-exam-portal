@@ -47,7 +47,7 @@ async function fetchQuiz() {
     const selectedSubject = document.getElementById('subject-dropdown').value;
     
     try {
-        // questions.json ን ሳይሆን ሰርቨሩ ላይ የሰራነውን API ቀጥታ ይጠራል
+        // በቀጥታ ወደ ሰርቨሩ የ API አድራሻ ጥያቄ ይልካል
         const response = await fetch(`/api/quiz/${selectedSubject}`);
         const data = await response.json();
         
