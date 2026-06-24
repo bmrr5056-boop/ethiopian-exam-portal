@@ -8,11 +8,26 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // የጥያቄዎች ኤፒአይ (API)
-app.get('/api/questions', (req, res) => {
-    fs.readFile('questions.json', 'utf8', (err, data) => {
-        if (err) return res.status(500).json({ error: "ፋይሉን ማንበብ አልተቻለም" });
-        res.json(JSON.parse(data));
-    });
+app.get('/api/quiz/:subject', (req, res) => {
+    // ተማሪው የነካውን ሰብጀክት ስም ወደ lowercase ይቀይራል
+    const subjectParam = req.params.subject.trim().toLowerCase();
+    
+    // በJSON ውስጥ ካሉት ሰብጀክቶች ጋር ሁለቱንም አሳንሶ ያወዳድራል
+    const filteredQuestions = allQuestions.filter(q => 
+        q.subject && q.subject.trim().toLowerCase() === subjectParam
+    );
+
+    if (filteredQuestions.length === 0) {
+        return res.status(404).json({ 
+            message: `በዚህ ትምህርት ስር እስካሁን ምንም ጥያቄ አልተጨመረም! እባክህ questions.json ፋይል ላይ ጥያቄዎችን ጨምር።` 
+        });
+    }
+
+    // የማቀያየሪያ (Shuffle) ሎጂክ
+    const shuffled = filteredQuestions.sort(() => 0.5 - Math.random());
+    const selectedQuestions = shuffled.slice(0, 20); 
+
+    res.json(selectedQuestions);
 });
 
 // 1. የተማሪዎች ምዝገባ ኤፒአይ (Sign Up)
