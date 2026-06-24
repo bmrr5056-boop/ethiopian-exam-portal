@@ -1,32 +1,143 @@
+
 [
   {
     "id": 1,
     "grade": 12,
     "stream": "natural",
-    "subject": "Physics",
-    "question": "Which of the following colors of light has the highest frequency?",
+    "subject": "physics",
+    "question": "Which of the following colors has the highest frequency?",
     "options": ["Red", "Green", "Blue", "Violet"],
     "answer": "Violet",
-    "explanation": "In the visible light spectrum, violet has the shortest wavelength and the highest frequency."
+    "explanation": "In the visible light spectrum, violet has the shortest wavelength and highest frequency."
   },
   {
     "id": 2,
     "grade": 12,
     "stream": "social",
-    "subject": "Geography",
-    "question": "Which of the following is the largest river in the world by water volume?",
+    "subject": "geography",
+    "question": "Which of the following is the longest river in the world?",
     "options": ["Nile", "Amazon", "Mississippi", "Yangtze"],
-    "answer": "Amazon",
-    "explanation": "The Amazon River is the largest river by discharge volume of water in the world."
+    "answer": "Nile",
+    "explanation": "The Nile River is the longest river in the world, while the Amazon is the largest by water volume."
   },
   {
     "id": 3,
     "grade": 11,
     "stream": "both",
-    "subject": "English",
+    "subject": "english",
     "question": "Identify the correct sentence:",
-    "options": ["He don't like coffee.", "He doesn't likes coffee.", "He doesn't like coffee.", "He didn't liked coffee."],
+    "options": ["He don't like coffee.", "He doesn't likes coffee.", "He doesn't like coffee.", "He not like coffee."],
     "answer": "He doesn't like coffee.",
-    "explanation": "After the auxiliary verb 'does not', the base form of the verb 'like' must be used."
+    "explanation": "After the auxiliary verb 'doesn't', the base form of the verb 'like' must be used."
+  },
+  {
+    "id": 4,
+    "grade": 12,
+    "stream": "natural",
+    "subject": "english",[  {
+    "id": 5,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "By the time the teacher arrived, the students ________ the classroom clean.",
+    "options": ["have made", "had made", "are making", "will make"],
+    "answer": "had made",
+    "explanation": "The past perfect tense ('had made') is used because the action of cleaning was completed before another past action (the teacher's arrival)."
+  },
+  {
+    "id": 6,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "I would have passed the entrance exam if I ________ harder last year.",
+    "options": ["studied", "have studied", "had studied", "would study"],
+    "answer": "had studied",
+    "explanation": "This is a third conditional sentence, which refers to an impossible past condition. The structure is 'if + past perfect, would have + past participle'."
+  },
+  {
+    "id": 7,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "The man ________ car was stolen yesterday has reported the incident to the police.",
+    "options": ["who", "whom", "which", "whose"],
+    "answer": "whose",
+    "explanation": "The relative pronoun 'whose' is used to show possession (the car belonging to the man)."
+  },
+  {
+    "id": 8,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "Neither the students nor the teacher ________ present at the meeting yesterday.",
+    "options": ["was", "were", "are", "have been"],
+    "answer": "was",
+    "explanation": "When using 'neither... nor...', the verb agrees with the closer subject. 'The teacher' is singular, so it takes the singular verb 'was'."
+  },
+  {
+    "id": 9,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "We need to ________ the environment by reducing carbon emissions.",
+    "options": ["preserve", "pollute", "neglect", "destroy"],
+    "answer": "preserve",
+    "explanation": "Based on context, 'preserve' (to protect or keep safe) is the only option that logically fits the goal of reducing emissions."
+  },
+  {
+    "id": 10,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "Although it was raining heavily, ________ they decided to go for a walk.",
+    "options": ["but", "however", "yet", "omitted (no word needed)"],
+    "answer": "omitted (no word needed)",
+    "explanation": "The conjunction 'Although' is already connecting the clauses. Adding 'but' or 'however' in the same sentence creates a grammatical redundancy."
+  },
+  {
+    "id": 11,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "He speaks English as fluently as if he ________ a native speaker.",
+    "options": ["is", "was", "were", "has been"],
+    "answer": "were",
+    "explanation": "The subjunctive mood is used after 'as if' to express an imaginary or unreal situation, which requires 'were' for all subjects."
+  },
+  {
+    "id": 12,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "You ________ turn off your phone during the examination; it is strictly prohibited.",
+    "options": ["must", "should", "might", "ought to"],
+    "answer": "must",
+    "explanation": "The modal verb 'must' is used to express a strong obligation or rule, which matches 'strictly prohibited'."
+  },
+  {
+    "id": 13,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "The project was called ________ due to a lack of sufficient funding.",
+    "options": ["off", "on", "up", "in"],
+    "answer": "off",
+    "explanation": "The phrasal verb 'call off' means to cancel something."
+  },
+  {
+    "id": 14,
+    "grade": 12,
+    "stream": "both",
+    "subject": "english",
+    "question": "The new curriculum focus is heavily centered ________ building practical skills.",
+    "options": ["at", "on", "in", "with"],
+    "answer": "on",
+    "explanation": "The verb 'centered' is standardly followed by the preposition 'on'."
+  }
+]
+    "question": "She is looking forward to ________ her graduation next month.",
+    "options": ["celebrate", "celebrated", "celebrating", "celebrates"],
+    "answer": "celebrating",
+    "explanation": "The phrasal verb 'look forward to' is always followed by a gerund (verb+ing)."
   }
 ]
