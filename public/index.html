@@ -6,8 +6,8 @@
     <title>Ethiopian 12th Grade Exam Portal</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: #121214; color: #e1e1e6; padding: 20px; display: flex; justify-content: center; align-content: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 650px; background: #202024; padding: 30px; rounded-top: 8px; border-radius: 8px; border: 1px solid #323238; }
+        body { background: #121214; color: #e1e1e6; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; position: relative; padding-bottom: 60px; }
+        .container { width: 100%; max-width: 650px; background: #202024; padding: 30px; border-radius: 8px; border: 1px solid #323238; }
         h1, h2 { color: #04d361; text-align: center; margin-bottom: 20px; }
         .hidden { display: none !important; }
         .btn { display: block; width: 100%; background: #04d361; color: #000; padding: 12px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; text-align: center; transition: background 0.2s; }
@@ -28,11 +28,15 @@
         .txt-correct { color: #04d361; font-weight: bold; }
         .txt-incorrect { color: #f75a68; font-weight: bold; }
         .score-display { text-align: center; font-size: 24px; margin: 20px 0; color: #fff; }
+        
+        /* Persistent Footer Info requested by user */
+        .footer-owner { position: fixed; bottom: 15px; left: 0; width: 100%; text-align: center; color: #7c7c8a; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- 1. LOGIN SECTION -->
     <div id="login-section">
         <h1>የ12ኛ ክፍል ብሔራዊ ፈተና መለማመጃ ፖርታል</h1>
         <div class="form-group">
@@ -42,6 +46,7 @@
         <button class="btn" onclick="handleLogin()">ግባ (Login)</button>
     </div>
 
+    <!-- 2. STREAM/SUBJECT SELECTION -->
     <div id="stream-section" class="hidden">
         <h2 id="welcome-msg">እንኳን ደህና መጡ!</h2>
         <div class="form-group">
@@ -61,6 +66,7 @@
         <button class="btn" id="start-btn" onclick="startExam()" disabled>ፈተናውን ጀምር</button>
     </div>
 
+    <!-- 3. EXAM IN PROGRESS SECTION -->
     <div id="exam-section" class="hidden">
         <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
         <div style="display: flex; justify-content: space-between; margin-bottom: 15px; color: #a8a8b3;">
@@ -72,6 +78,7 @@
         <button class="btn" id="next-btn" onclick="goToNextQuestion()" disabled>ቀጣይ ጥያቄ ➡️</button>
     </div>
 
+    <!-- 4. RESULTS & REVIEW SECTION -->
     <div id="result-section" class="hidden">
         <h2>የፈተናው ውጤት ማጠቃለያ</h2>
         <div class="score-display" id="score-text">ውጤት፡ 0 / 0 (0%)</div>
@@ -83,19 +90,22 @@
     </div>
 </div>
 
+<!-- Non-disappearing Owner signature requested by Amanuel Zewude -->
+<div class="footer-owner">Owner: Amanuel Zewude</div>
+
 <script>
     let allQuestions = [];
     let currentSubjectQuestions = [];
     let currentIndex = 0;
-    let userAnswers = []; // Stores indices of chosen options
+    let userAnswers = [];
     let score = 0;
     let studentName = "";
 
-    // Load data from server
     async function loadQuestions() {
         try {
             const res = await fetch('/questions');
             allQuestions = await res.json();
+            console.log("Loaded questions successfully:", allQuestions.length);
         } catch (err) {
             console.error("የጥያቄ ፋይሉን ማንበብ አልተቻለም:", err);
         }
@@ -123,15 +133,31 @@
             return;
         }
 
-        // Extract unique subjects belonging to selected stream
-        const subjects = [...new Set(allQuestions.filter(q => q.stream === stream).map(q => q.subject))];
+        // Improved filtering to make sure text casing mismatch doesn't break subject dropdown
+        const filtered = allQuestions.filter(q => q.stream && q.stream.toLowerCase() === stream.toLowerCase());
+        const subjects = [...new Set(filtered.map(q => q.subject))];
         
-        subjects.forEach(sub => {
-            const opt = document.createElement('option');
-            opt.value = sub;
-            opt.innerText = sub.toUpperCase();
-            subSelect.appendChild(opt);
-        });
+        if (subjects.length === 0) {
+            // Fallback: If strict filter yields nothing, pull all unique subjects to ensure dropdown is never empty
+            const fallbackSubjects = [...new Set(allQuestions.map(q => q.subject))];
+            fallbackSubjects.forEach(sub => {
+                if(sub) {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.innerText = sub.toUpperCase();
+                    subSelect.appendChild(opt);
+                }
+            });
+        } else {
+            subjects.forEach(sub => {
+                if(sub) {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.innerText = sub.toUpperCase();
+                    subSelect.appendChild(opt);
+                }
+            });
+        }
 
         subSelect.disabled = false;
         startBtn.disabled = false;
@@ -142,7 +168,11 @@
         const subject = document.getElementById('subject-select').value;
         if(!subject) return alert("እባክህ ትምህርት ምረጥ!");
 
-        currentSubjectQuestions = allQuestions.filter(q => q.stream === stream && q.subject === subject);
+        currentSubjectQuestions = allQuestions.filter(q => q.subject === subject);
+        if(currentSubjectQuestions.length === 0) {
+            currentSubjectQuestions = allQuestions.filter(q => q.stream && q.stream.toLowerCase() === stream.toLowerCase() && q.subject === subject);
+        }
+        
         if(currentSubjectQuestions.length === 0) return alert("ለዚህ ክፍለ ትምህርት የተዘጋጀ ጥያቄ አልተገኘም!");
 
         currentIndex = 0;
@@ -178,11 +208,9 @@
     }
 
     function selectOption(element, optionIndex) {
-        // Clear previous selections
         const containers = document.querySelectorAll('.option-container');
         containers.forEach(c => c.classList.remove('selected'));
         
-        // Highlight chosen
         element.classList.add('selected');
         userAnswers[currentIndex] = optionIndex;
         
@@ -216,7 +244,7 @@
             
             item.innerHTML = `
                 <p style="font-weight:bold; margin-bottom:5px;">ጥያቄ ${idx + 1}: ${q.question}</p>
-                <p>ያንተ መልስ: <span class="${isCorrect ? 'txt-correct' : 'txt-incorrect'}">${q.options[userChoice]}</span></p>
+                <p>ያንተ መልስ: <span class="${isCorrect ? 'txt-correct' : 'txt-incorrect'}">${q.options[userChoice] || 'ያልተመለሰ'}</span></p>
                 ${!isCorrect ? `<p>ትክክለኛ መልስ: <span class="txt-correct">${q.options[q.correctAnswer]}</span></p>` : ''}
             `;
             reviewBlock.appendChild(item);
@@ -227,11 +255,9 @@
     }
 
     function backToStreamSelection() {
-        // Hides result section and goes directly back to natural/social selection without forcing re-login!
         document.getElementById('result-section').classList.add('hidden');
         document.getElementById('stream-section').classList.remove('hidden');
         
-        // Reset inputs
         document.getElementById('stream-select').value = "";
         document.getElementById('subject-select').innerHTML = '<option value="">-- መጀመሪያ ዘርፍ ይምረጡ --</option>';
         document.getElementById('subject-select').disabled = true;
