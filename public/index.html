@@ -31,7 +31,6 @@
         .txt-incorrect { color: #f75a68; font-weight: bold; }
         .score-display { text-align: center; font-size: 24px; margin: 20px 0; color: #fff; }
         
-        /* Navigation area layout */
         .nav-controls { display: flex; gap: 10px; margin-top: 20px; }
         .nav-controls .btn { flex: 1; margin-top: 0; }
 
@@ -106,41 +105,24 @@
         "social": ["English", "Mathematics", "Geography", "History", "Civics", "Economics", "Aptitude (SAT)"]
     };
 
-    // Deep backup questions bank for all 7 subjects to ensure content availability
-    const fallbackQuestions = [
-        { "subject": "English", "question": "He ________ English fluently before he moved to London.", "options": ["has spoken", "had spoken", "speaks", "is speaking"], "correctAnswer": 1 },
-        { "subject": "English", "question": "What is the antonym of the word 'Obvious'?", "options": ["Clear", "Hidden", "Plain", "Active"], "correctAnswer": 1 },
-        { "subject": "English", "question": "Choose the correctly spelled word.", "options": ["Receive", "Recieve", "Receve", "Ricieve"], "correctAnswer": 0 },
-        { "subject": "Mathematics", "question": "What is the derivative of f(x) = 3x² + 5x?", "options": ["6x + 5", "3x + 5", "6x", "5x"], "correctAnswer": 0 },
-        { "subject": "Physics", "question": "Which of the following is a scalar quantity?", "options": ["Velocity", "Acceleration", "Mass", "Force"], "correctAnswer": 2 },
-        { "subject": "Chemistry", "question": "What is the pH value of pure water?", "options": ["1", "5", "7", "14"], "correctAnswer": 2 },
-        { "subject": "Biology", "question": "Which organelle is considered the powerhouse of the cell?", "options": ["Nucleus", "Ribosome", "Mitochondria", "Golgi apparatus"], "correctAnswer": 2 },
-        { "subject": "Civics", "question": "Which branch of government is responsible for interpreting laws?", "options": ["Legislative", "Executive", "Judiciary", "Federal Council"], "correctAnswer": 2 },
-        { "subject": "Aptitude (SAT)", "question": "Find the missing number in the sequence: 2, 4, 8, 16, ___", "options": ["20", "24", "32", "64"], "correctAnswer": 2 },
-        { "subject": "Geography", "question": "Which river is the longest in the world?", "options": ["Amazon", "Nile", "Yangtze", "Mississippi"], "correctAnswer": 1 },
-        { "subject": "History", "question": "In which year did the Battle of Adwa take place?", "options": ["1896", "1935", "1888", "1941"], "correctAnswer": 0 },
-        { "subject": "Economics", "question": "What happens to demand when the price of a normal good decreases?", "options": ["Decreases", "Increases", "Remains constant", "Becomes zero"], "correctAnswer": 1 }
-    ];
-
     let allQuestions = [];
     let currentSubjectQuestions = [];
     let currentIndex = 0;
-    let userAnswers = []; // Holds index of selected options, undefined if skipped
+    let userAnswers = [];
     let studentName = "";
 
+    // FIXED: Exact route matching to server.js endpoint
     async function loadQuestions() {
         try {
-            const res = await fetch('/questions');
+            const res = await fetch('/api/questions');
             if (res.ok) {
                 allQuestions = await res.json();
+                console.log("Questions loaded successfully! Total: " + allQuestions.length);
             } else {
-                allQuestions = fallbackQuestions;
+                console.error("Failed to fetch questions from API");
             }
         } catch (err) {
-            allQuestions = fallbackQuestions;
-        }
-        if (!allQuestions || allQuestions.length === 0) {
-            allQuestions = fallbackQuestions;
+            console.error("API error connecting to server:", err);
         }
     }
     loadQuestions();
@@ -181,21 +163,20 @@
         const subject = document.getElementById('subject-select').value;
         if(!subject) return alert("እባክህ ትምህርት ምረጥ!");
 
-        // Filter from backend database
-        currentSubjectQuestions = allQuestions.filter(q => q.subject && q.subject.toLowerCase().trim() === subject.toLowerCase().trim());
+        // Filter the selected subject from backend bank
+        let matched = allQuestions.filter(q => q.subject && q.subject.toLowerCase().trim() === subject.toLowerCase().trim());
         
-        // If empty, sync from default safety database
-        if(currentSubjectQuestions.length === 0) {
-            currentSubjectQuestions = fallbackQuestions.filter(q => q.subject && q.subject.toLowerCase().trim() === subject.toLowerCase().trim());
+        if(matched.length === 0) {
+            alert("በዚህ ትምህርት ስር እስካሁን ምንም ጥያቄ አልተጫነም! እባክህ questions.json ፋይል ላይ ጥያቄዎችን ጨምር።");
+            return;
         }
 
-        // Hard guarantee fallback
-        if(currentSubjectQuestions.length === 0) {
-            currentSubjectQuestions = [
-                { "subject": subject, "question": `Welcome to the ${subject.toUpperCase()} exam preparation module. This is an active reference question.`, "options": ["Option A", "Option B", "Option C", "Option D"], "correctAnswer": 0 }
-            ];
+        // Optimization for 1000+ questions: If there are many questions, select 50 random ones per practice set
+        if (matched.length > 50) {
+            matched = matched.sort(() => 0.5 - Math.random()).slice(0, 50);
         }
 
+        currentSubjectQuestions = matched;
         currentIndex = 0;
         userAnswers = new Array(currentSubjectQuestions.length).fill(undefined);
 
@@ -211,17 +192,15 @@
         document.getElementById('question-counter').innerText = `ጥያቄ፡ ${currentIndex + 1}/${currentSubjectQuestions.length}`;
         document.getElementById('question-text').innerText = q.question;
         
-        // Progress tracks visited density accurately
         const fillPercent = ((currentIndex + 1) / currentSubjectQuestions.length) * 100;
         document.getElementById('progress-fill').style.width = `${fillPercent}%`;
 
-        // Configure visibility of Navigation flows
         document.getElementById('prev-btn').disabled = (currentIndex === 0);
         
         const nextBtn = document.getElementById('next-btn');
         if (currentIndex === currentSubjectQuestions.length - 1) {
             nextBtn.innerText = "መጨረሻ 🏁";
-            nextBtn.disabled = true; // Block auto-forwarding out of boundaries
+            nextBtn.disabled = true;
         } else {
             nextBtn.innerText = "ቀጣይ ➡️";
             nextBtn.disabled = false;
