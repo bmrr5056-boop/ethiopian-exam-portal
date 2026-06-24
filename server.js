@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -8,7 +7,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ሁሉንም ሰብጀክቶች የያዘ የጥያቄዎች ባንክ
 const allQuestions = [
   // --- ENGLISH ---
   { "id": 1, "grade": 12, "stream": "both", "subject": "english", "question": "Identify the correct sentence:", "options": ["He don't like coffee.", "He doesn't likes coffee.", "He doesn't like coffee.", "He not like coffee."], "answer": "He doesn't like coffee." },
@@ -37,7 +35,6 @@ const allQuestions = [
   { "id": 10, "grade": 12, "stream": "both", "subject": "aptitude (sat)", "question": "Complete the series: 2, 4, 8, 16, ________.", "options": ["32", "24", "20", "64"], "answer": "32" }
 ];
 
-// ዋናው የጥያቄ ማምጫ API Route
 app.get('/api/quiz/:subject', (req, res) => {
     let subjectParam = req.params.subject.trim().toLowerCase();
 
@@ -56,4 +53,3 @@ app.get('/api/quiz/:subject', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
