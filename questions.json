@@ -2,7 +2,7 @@
   {
     "id": 1,
     "grade": 12,
-    "stream": "both",
+    "stream": "natural",
     "subject": "ENGLISH",
     "question": "Identify the correct sentence:",
     "options": ["He don't like coffee.", "He doesn't likes coffee.", "He doesn't like coffee.", "He not like coffee."],
@@ -11,7 +11,7 @@
   {
     "id": 2,
     "grade": 12,
-    "stream": "both",
+    "stream": "natural",
     "subject": "ENGLISH",
     "question": "She is looking forward to ________ her graduation next month.",
     "options": ["celebrate", "celebrated", "celebrating", "celebrates"],
@@ -20,7 +20,7 @@
   {
     "id": 3,
     "grade": 12,
-    "stream": "both",
+    "stream": "natural",
     "subject": "MATHEMATICS",
     "question": "What is the derivative of f(x) = x^2 + 3x?",
     "options": ["2x + 3", "x + 3", "2x", "3x"],
@@ -34,14 +34,5 @@
     "question": "Which of the following colors has the highest frequency?",
     "options": ["Red", "Green", "Blue", "Violet"],
     "answer": "Violet"
-  },
-  {
-    "id": 5,
-    "grade": 12,
-    "stream": "social",
-    "subject": "GEOGRAPHY",
-    "question": "Which of the following is the longest river in the world?",
-    "options": ["Nile", "Amazon", "Mississippi", "Yangtze"],
-    "answer": "Nile"
   }
 ]
