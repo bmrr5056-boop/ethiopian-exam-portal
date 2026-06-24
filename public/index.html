@@ -88,15 +88,15 @@
 <div class="footer-owner">Owner: Amanuel Zewude</div>
 
 <script>
-    // Hardcoded direct database mapping to guarantee dropdowns work 100% stable without fetching issues
-    const hardcodedQuestions = [
-        { "stream": "natural", "subject": "physics", "question": "Which of the following is a scalar quantity?", "options": ["Velocity", "Acceleration", "Mass", "Force"], "correctAnswer": 2 },
-        { "stream": "natural", "subject": "physics", "question": "What is the SI unit of force?", "options": ["Joule", "Newton", "Watt", "Pascal"], "correctAnswer": 1 },
-        { "stream": "natural", "subject": "chemistry", "question": "What is the atomic number of Hydrogen?", "options": ["1", "2", "6", "8"], "correctAnswer": 0 },
-        { "stream": "natural", "subject": "biology", "question": "Which organelle is known as the powerhouse of the cell?", "options": ["Nucleus", "Ribosome", "Mitochondria", "Golgi body"], "correctAnswer": 2 },
-        { "stream": "social", "subject": "geography", "question": "Which river is the longest in the world?", "options": ["Amazon", "Nile", "Yangtze", "Mississippi"], "correctAnswer": 1 },
-        { "stream": "social", "subject": "history", "question": "In which year did the Battle of Adwa take place?", "options": ["1896", "1935", "1888", "1941"], "correctAnswer": 0 },
-        { "stream": "social", "subject": "civics", "question": "What is the core principle of democracy?", "options": ["Rule of King", "Rule of Law and People's Voice", "Military power", "Single party rule"], "correctAnswer": 1 }
+    // Strictly updated to include all 7 official subjects per stream
+    const subjectsMap = {
+        "natural": ["English", "Mathematics", "Physics", "Chemistry", "Biology", "Civics", "Aptitude (SAT)"],
+        "social": ["English", "Mathematics", "Geography", "History", "Civics", "Economics", "Aptitude (SAT)"]
+    };
+
+    const fallbackQuestions = [
+        { "stream": "natural", "subject": "Physics", "question": "Which of the following is a scalar quantity?", "options": ["Velocity", "Acceleration", "Mass", "Force"], "correctAnswer": 2 },
+        { "stream": "social", "subject": "History", "question": "In which year did the Battle of Adwa take place?", "options": ["1896", "1935", "1888", "1941"], "correctAnswer": 0 }
     ];
 
     let allQuestions = [];
@@ -112,13 +112,10 @@
             if (res.ok) {
                 allQuestions = await res.json();
             } else {
-                allQuestions = hardcodedQuestions;
+                allQuestions = fallbackQuestions;
             }
         } catch (err) {
-            allQuestions = hardcodedQuestions;
-        }
-        if(!allQuestions || allQuestions.length === 0) {
-            allQuestions = hardcodedQuestions;
+            allQuestions = fallbackQuestions;
         }
     }
     loadQuestions();
@@ -138,23 +135,18 @@
         const startBtn = document.getElementById('start-btn');
         
         subSelect.innerHTML = '<option value="">-- ይምረጡ --</option>';
-        if(!stream) {
+        if(!stream || !subjectsMap[stream]) {
             subSelect.disabled = true;
             startBtn.disabled = true;
             return;
         }
 
-        // Filter out unique subjects cleanly
-        const filtered = allQuestions.filter(q => q.stream && q.stream.toLowerCase() === stream.toLowerCase());
-        const subjects = [...new Set(filtered.map(q => q.subject))];
-        
-        subjects.forEach(sub => {
-            if(sub) {
-                const opt = document.createElement('option');
-                opt.value = sub;
-                opt.innerText = sub.toUpperCase();
-                subSelect.appendChild(opt);
-            }
+        // Populates exactly 7 distinct subjects for the chosen stream
+        subjectsMap[stream].forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub.toLowerCase();
+            opt.innerText = sub.toUpperCase();
+            subSelect.appendChild(opt);
         });
 
         subSelect.disabled = false;
@@ -162,13 +154,17 @@
     }
 
     function startExam() {
-        const stream = document.getElementById('stream-select').value;
         const subject = document.getElementById('subject-select').value;
         if(!subject) return alert("እባክህ ትምህርት ምረጥ!");
 
-        currentSubjectQuestions = allQuestions.filter(q => q.stream.toLowerCase() === stream.toLowerCase() && q.subject.toLowerCase() === subject.toLowerCase());
+        currentSubjectQuestions = allQuestions.filter(q => q.subject && q.subject.toLowerCase() === subject.toLowerCase());
         
-        if(currentSubjectQuestions.length === 0) return alert("ለዚህ ክፍለ ትምህርት የተዘጋጀ ጥያቄ አልተገኘም!");
+        if(currentSubjectQuestions.length === 0) {
+            // Dynamic generation of fallback text if questions don't exist yet
+            currentSubjectQuestions = [
+                { "subject": subject, "question": `Welcome to the ${subject.toUpperCase()} exam section. This is a sample placeholder question.`, "options": ["Option A", "Option B", "Option C", "Option D"], "correctAnswer": 0 }
+            ];
+        }
 
         currentIndex = 0;
         score = 0;
